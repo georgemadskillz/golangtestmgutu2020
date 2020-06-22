@@ -19,17 +19,20 @@ func main() {
 	reader := bufio.NewReader(os.Stdin)
 
 	for {
-		cols := int(scr.GetWidth())
-		rows := int(scr.GetHeight())
+		width := int(scr.GetWidth())
+		height := int(scr.GetHeight())
 
-		var c int
-		var r int
-		for r = 0; c < rows; c++ {
-			for c = 0; r < cols; r++ {
-				paint.DrawRune(c, r, rune(c))
+		paint.DrawRune(0, 0, '┌')
+		paint.DrawRune(width-1, 0, '┐')
+		paint.DrawRune(0, height-1, '└')
+		paint.DrawRune(width-1, height-1, '┘')
+
+		cnt := 0
+		for w := 0; w < width-1; w++ {
+			for h := 0; h < height-1; h++ {
+				paint.DrawRune(w, 0, rune(cnt))
+				cnt++
 			}
-
-			paint.DrawRune(c, r, '\n')
 		}
 
 		paint.SendToScreen(&scr)

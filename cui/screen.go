@@ -2,6 +2,7 @@ package cui
 
 import (
 	"bytes"
+	"fmt"
 	"os"
 	"os/exec"
 	"runtime"
@@ -57,7 +58,8 @@ func (scr *Screen) Clear() {
 
 // Draw screen by writing screen buffer to Stdout
 func (scr *Screen) Draw() {
-	scr.buffer.WriteTo(os.Stdout)
+	fmt.Printf("SCREEN BUFFER: %v\n", scr.buffer)
+	//scr.buffer.WriteTo(os.Stdout)
 }
 
 func (ws *winsize) update() {
