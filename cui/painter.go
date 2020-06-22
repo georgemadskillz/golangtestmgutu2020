@@ -1,4 +1,4 @@
-package main
+package cui
 
 // Painter type implements painting to Screen at coordinates
 type Painter struct {

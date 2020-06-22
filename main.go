@@ -10,7 +10,7 @@ import (
 // Used symbols ┌ ─ ┐ └ │ ┘
 func main() {
 	cyclesCnt := 0
-	var scr cui.creen
+	var scr cui.Screen
 	var paint cui.Painter
 
 	scr.Init()
