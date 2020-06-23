@@ -1,8 +1,6 @@
 package cui
 
 import (
-	"bytes"
-	"fmt"
 	"os"
 	"os/exec"
 	"runtime"
@@ -13,8 +11,10 @@ import (
 // Screen is handling terminal window output
 type Screen struct {
 	size       winsize
+	width      int
+	height     int
 	clearFuncs map[string]func()
-	buffer     bytes.Buffer
+	buffer     [][]rune
 }
 
 // Winsize stores terminal window sizes
@@ -27,8 +27,6 @@ type winsize struct {
 
 // Init Screen params
 func (scr *Screen) Init() {
-	// Update window size
-	scr.size.update()
 
 	// Set clear screen system calls functions
 	scr.clearFuncs = make(map[string]func())
@@ -43,7 +41,21 @@ func (scr *Screen) Init() {
 		cmd.Run()
 	}
 
-	scr.Clear()
+	scr.UpdateSize()
+
+	scr.buffer = make([][]rune, scr.height)
+
+	for i := 0; i < scr.height; i++ {
+		scr.buffer[i] = make([]rune, scr.width)
+		for j := range scr.buffer[i] {
+			scr.buffer[i][j] = ' '
+		}
+	}
+}
+
+// SetRune sets rune at given coords on screen
+func (scr *Screen) SetRune(r rune, x, y int) {
+	scr.buffer[y][x] = r
 }
 
 // Clear screen by system call from clearFunc map
@@ -56,37 +68,35 @@ func (scr *Screen) Clear() {
 	}
 }
 
-// Draw screen by writing screen buffer to Stdout
-func (scr *Screen) Draw() {
-	fmt.Printf("SCREEN BUFFER: %v\n", scr.buffer)
-	//scr.buffer.WriteTo(os.Stdout)
+// SendToDisplay send screen buffer to std out to display it
+func (scr *Screen) SendToDisplay() {
+	for _, runesRow := range scr.buffer {
+		os.Stdout.WriteString(string(runesRow))
+	}
 }
 
-func (ws *winsize) update() {
+// UpdateSize get current info about terminal screen size
+func (scr *Screen) UpdateSize() {
 
 	retCode, _, errno := syscall.Syscall(syscall.SYS_IOCTL,
 		uintptr(syscall.Stdin),
 		uintptr(syscall.TIOCGWINSZ),
-		uintptr(unsafe.Pointer(ws)))
+		uintptr(unsafe.Pointer(&scr.size)))
 
 	if int(retCode) == -1 {
 		panic(errno)
 	}
+
+	scr.width = int(scr.size.Col)
+	scr.height = int(scr.size.Row)
 }
 
 // GetWidth returns number of columns of terminal window
-func (scr *Screen) GetWidth() uint16 {
-	scr.size.update()
-	return scr.size.Col
+func (scr *Screen) GetWidth() int {
+	return scr.width
 }
 
 // GetHeight returns number of rows of terminal window
-func (scr *Screen) GetHeight() uint16 {
-	scr.size.update()
-	return scr.size.Row
-}
-
-// GetBuff returns pointer to the screen buffer
-func (scr *Screen) GetBuff() *bytes.Buffer {
-	return &scr.buffer
+func (scr *Screen) GetHeight() int {
+	return scr.height
 }

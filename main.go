@@ -11,32 +11,21 @@ import (
 func main() {
 	cyclesCnt := 0
 	var scr cui.Screen
-	var paint cui.Painter
-
 	scr.Init()
-	paint.Init(&scr)
 
 	reader := bufio.NewReader(os.Stdin)
 
 	for {
-		width := int(scr.GetWidth())
-		height := int(scr.GetHeight())
+		scr.UpdateSize()
+		width := scr.GetWidth()
+		height := scr.GetHeight()
 
-		paint.DrawRune(0, 0, '┌')
-		paint.DrawRune(width-1, 0, '┐')
-		paint.DrawRune(0, height-1, '└')
-		paint.DrawRune(width-1, height-1, '┘')
+		scr.SetRune('┌', 0, 0)
+		scr.SetRune('┐', width-1, 0)
+		scr.SetRune('└', 0, height-1)
+		scr.SetRune('┘', width-1, height-1)
 
-		cnt := 0
-		for w := 0; w < width-1; w++ {
-			for h := 0; h < height-1; h++ {
-				paint.DrawRune(w, 0, rune(cnt))
-				cnt++
-			}
-		}
-
-		paint.SendToScreen(&scr)
-		scr.Draw()
+		scr.SendToDisplay()
 
 		_, _, err := reader.ReadRune()
 		if err != nil {
@@ -47,4 +36,6 @@ func main() {
 		cyclesCnt++
 		//scr.Clear()
 	}
+
+	reader.ReadRune()
 }
