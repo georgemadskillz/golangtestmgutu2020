@@ -54,7 +54,11 @@ func (scr *Screen) Init() {
 }
 
 // SetRune sets rune at given coords on screen
-func (scr *Screen) SetRune(r rune, x, y int) {
+func (scr *Screen) SetRune(x, y int, r rune) {
+	if x >= scr.width || y >= scr.height {
+		return
+	}
+
 	scr.buffer[y][x] = r
 }
 
