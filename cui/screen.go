@@ -70,6 +70,7 @@ func (scr *Screen) Clear() {
 
 // SendToDisplay send screen buffer to std out to display it
 func (scr *Screen) SendToDisplay() {
+	scr.Clear()
 	for _, runesRow := range scr.buffer {
 		os.Stdout.WriteString(string(runesRow))
 	}
