@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"flydb/cui"
+	"flydb/ioctrl"
 	"os"
 
 	"golang.org/x/crypto/ssh/terminal"
@@ -46,9 +47,14 @@ func main() {
 	screenBox5 := cui.Box{50, 20, 15, 15, false}
 	screenBox5.Draw(&scr)
 
+	var io ioctrl.FlyDbIO
+
+	io.Init("database/flights.fdb", "database/airports.fdb", "database/prices.fdb")
+
 	for {
 
 	}
+
 }
 
 func userInpController(scr *cui.Screen) {

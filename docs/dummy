@@ -1,0 +1,81 @@
+*
+configsfly := make([]Flight, 0)
+
+	configFile, err := 
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	configLines := strings.Split(string(configFile), "\n")
+
+	for i := 0; i < len(configLines); i++ {
+
+		if configLines[i] != "" {
+
+			configLine := strings.Split(string(configLines[i]), ",")
+
+			newConfig := Flight{TimeWhen: configLine[0], FlightFrom: configLine[1], FlightTo: configLine[2], TimeTo: configLine[3]}
+			configsfly = append(configsfly, newConfig)
+		}
+	}
+
+	for _, config := range configsfly {
+		println(config.TimeWhen + " " + config.FlightFrom + " " + config.FlightTo+ " " + config.TimeTo)
+	}
+
+/////////////////////////////
+configsair := make([]Airport, 0)
+
+configFile, err := ioutil.ReadFile()
+
+if err != nil {
+	log.Fatal(err)
+}
+
+configLines := strings.Split(string(configFile), "\n")
+
+for i := 0; i < len(configLines); i++ {
+
+	if configLines[i] != "" {
+
+		configLine := strings.Split(string(configLines[i]), ",")
+
+		newConfig := Airport{IdAir: configLine[0], AirportFrom: configLine[1], AirportTo: configLine[2]}
+		configsair = append(configsair, newConfig)
+	}
+}
+
+for _, config := range configsair {
+	println(config.IdAir + " " + config.AirportFrom + " " + config.AirportTo)
+}
+
+
+////////////////
+configsair := make([]Cost, 0)
+
+configFile, err := ioutil.ReadFile()
+
+if err != nil {
+	log.Fatal(err)
+}
+
+configLines := strings.Split(string(configFile), "\n")
+
+for i := 0; i < len(configLines); i++ {
+
+	if configLines[i] != "" {
+
+		configLine := strings.Split(string(configLines[i]), ",")
+
+		newConfig := Cost{IdAir: configLine[0], Seat: configLine[1], Costr: configLine[2]}
+		configsair = append(configsair, newConfig)
+	}
+}
+
+for _, config := range configsair {
+	println(config.IdAir + " " + config.Seat + " " + config.Costr)
+}
+
+
+*/
