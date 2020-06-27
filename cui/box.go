@@ -29,14 +29,19 @@ func (b *Box) SetActiveState(state bool) {
 	b.IsActive = state
 }
 
-// Draw draws empty box at screen buffer
-// and fill its internal space with space symbols
-func (b *Box) Draw(scr *Screen) {
+// Clean cleans alll place iwithin borders with spaces
+func (b *Box) Clean(scr *Screen) {
 	for x := b.X + 1; x < b.X+b.Width-1; x++ {
 		for y := b.Y + 1; y < b.Y+b.Height-1; y++ {
 			scr.SetRune(x, y, ' ')
 		}
 	}
+}
+
+// Draw draws empty box at screen buffer
+// and fill its internal space with space symbols
+func (b *Box) Draw(scr *Screen) {
+	b.Clean(scr)
 
 	for x := b.X + 1; x < b.X+b.Width-1; x++ {
 		if b.IsActive {

@@ -24,21 +24,19 @@ func UIcontroller() {
 	screenExtbox := Box{0, 0, scrW, scrH, false}
 	screenExtbox.Draw(&scr)
 
-	screenBox1 := Box{1, 1, 5, 10, false}
-	screenBox1.Draw(&scr)
+	keyInfo := InfoBox{1, 1, 25, 7, false, nil}
+	keyInfo.Init()
+	keyInfo.SetLineText(0, "Shortcuts")
+	keyInfo.SetLineText(1, "Esc: quit")
+	keyInfo.SetLineText(2, "Tab: next window")
+	keyInfo.Draw(&scr)
 
-	screenBox2 := Box{15, 1, 5, 10, false}
-	screenBox2.Draw(&scr)
-
-	screenBox3 := Box{30, 1, 5, 10, false}
-	screenBox3.Draw(&scr)
-
-	screenBox4 := Box{1, 30, 10, 5, false}
-	screenBox4.Draw(&scr)
-
-	screenBox5 := Box{50, 20, 15, 15, false}
-	screenBox5.IsActive = true
-	screenBox5.Draw(&scr)
+	testInfo := InfoBox{30, 15, 25, 15, false, nil}
+	testInfo.Init()
+	testInfo.SetLineText(0, "Hello, world!")
+	testInfo.SetLineText(1, "blah blah ")
+	testInfo.SetLineText(8, "_____ ** ___")
+	testInfo.Draw(&scr)
 
 	scr.SendToDisplay()
 	scr.UpdateSize()
@@ -58,5 +56,9 @@ func UIcontroller() {
 		default:
 			scr.SendToDisplay()
 		}
+	}
+
+	for {
+
 	}
 }

@@ -55,6 +55,7 @@ func (scr *Screen) Init() {
 
 // SetRune sets rune at given coords on screen
 func (scr *Screen) SetRune(x, y int, r rune) {
+	//fmt.Printf("SetRune: x=%v, y=%v, rune=%q\r\n", x, y, r)
 	if x >= scr.width || y >= scr.height {
 		return
 	}
