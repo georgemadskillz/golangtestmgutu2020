@@ -39,17 +39,37 @@ func (b *Box) Draw(scr *Screen) {
 	}
 
 	for x := b.X + 1; x < b.X+b.Width-1; x++ {
-		scr.SetRune(x, b.Y, '─')
-		scr.SetRune(x, b.Y+b.Height-1, '─')
+		if b.IsActive {
+			scr.SetRune(x, b.Y, '━')
+			scr.SetRune(x, b.Y+b.Height-1, '━')
+		} else {
+			scr.SetRune(x, b.Y, '─')
+			scr.SetRune(x, b.Y+b.Height-1, '─')
+		}
+
 	}
 
 	for y := b.Y + 1; y < b.Y+b.Height-1; y++ {
-		scr.SetRune(b.X, y, '│')
-		scr.SetRune(b.X+b.Width-1, y, '│')
+		if b.IsActive {
+			scr.SetRune(b.X, y, '┃')
+			scr.SetRune(b.X+b.Width-1, y, '┃')
+		} else {
+			scr.SetRune(b.X, y, '│')
+			scr.SetRune(b.X+b.Width-1, y, '│')
+		}
+
 	}
 
-	scr.SetRune(b.X, b.Y, '┌')
-	scr.SetRune(b.X+b.Width-1, b.Y, '┐')
-	scr.SetRune(b.X, b.Y+b.Height-1, '└')
-	scr.SetRune(b.X+b.Width-1, b.Y+b.Height-1, '┘')
+	if b.IsActive {
+		scr.SetRune(b.X, b.Y, '┏')
+		scr.SetRune(b.X+b.Width-1, b.Y, '┓')
+		scr.SetRune(b.X, b.Y+b.Height-1, '┗')
+		scr.SetRune(b.X+b.Width-1, b.Y+b.Height-1, '┛')
+	} else {
+		scr.SetRune(b.X, b.Y, '┌')
+		scr.SetRune(b.X+b.Width-1, b.Y, '┐')
+		scr.SetRune(b.X, b.Y+b.Height-1, '└')
+		scr.SetRune(b.X+b.Width-1, b.Y+b.Height-1, '┘')
+	}
+
 }

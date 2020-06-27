@@ -1,5 +1,16 @@
 package ioctrl
 
+// IOcontroller handling DB files write/read
+func IOcontroller() {
+	var io FlyDbIO
+
+	io.Init("database/flights.fdb", "database/airports.fdb", "database/prices.fdb")
+
+	for {
+
+	}
+}
+
 // FlyDbIO is a common type for I/O actions
 type FlyDbIO struct {
 	flyFileName string
