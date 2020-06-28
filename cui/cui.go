@@ -2,6 +2,7 @@ package cui
 
 import (
 	"bufio"
+	"fmt"
 	"os"
 
 	"golang.org/x/crypto/ssh/terminal"
@@ -9,9 +10,10 @@ import (
 
 // UIctrl is a common structure handling UI
 type UIctrl struct {
-	Scr       Screen
-	TermState *terminal.State
-	Elements  []UIelement
+	Scr        Screen
+	TermState  *terminal.State
+	Elements   []UIelement
+	CurrActive int
 }
 
 // UIelement is
@@ -31,12 +33,11 @@ func (ui *UIctrl) Init() {
 	ui.TermState = state
 
 	// Init user inteface
-	ui.Elements = make([]UIelement, 3)
+	ui.Elements = make([]UIelement, 0)
 
 	// Ext border
 	screenExtbox := Box{0, 0, ui.Scr.Width, ui.Scr.Height, false}
-	screenExtbox.Draw(&ui.Scr)
-	ui.Elements = append(ui.Elements, UIelement{0, &screenExtbox})
+	ui.Elements = append(ui.Elements, UIelement{0, screenExtbox})
 
 	// Common window
 	commonBox := InfoBox{1, 1, 40, 10, false, nil}
@@ -46,15 +47,13 @@ func (ui *UIctrl) Init() {
 	commonBox.SetLineText(4, "# Рейсы")
 	commonBox.SetLineText(5, "# Аэропорты")
 	commonBox.SetLineText(6, "# Цены")
-	commonBox.Draw(&ui.Scr)
-	ui.Elements = append(ui.Elements, UIelement{1, &commonBox})
+	ui.Elements = append(ui.Elements, UIelement{1, commonBox})
 
 	// Table window
 	tableBox := InfoBox{41, 1, ui.Scr.Width - 2 - 40, ui.Scr.Height - 2, false, nil}
 	tableBox.Init()
 	tableBox.SetLineText(0, "Здесь будет таблица базы данных")
-	tableBox.Draw(&ui.Scr)
-	ui.Elements = append(ui.Elements, UIelement{1, &tableBox})
+	ui.Elements = append(ui.Elements, UIelement{2, tableBox})
 
 	// Status window
 	statusBox := InfoBox{1, 11, 40, ui.Scr.Height - 2 - 10, false, nil}
@@ -66,8 +65,34 @@ func (ui *UIctrl) Init() {
 	statusBox.SetLineText(20, "Управление программой:")
 	statusBox.SetLineText(21, "Esc: выход из программы")
 	statusBox.SetLineText(22, "Tab: переход между окнами")
-	statusBox.Draw(&ui.Scr)
-	ui.Elements = append(ui.Elements, UIelement{1, &statusBox})
+	ui.Elements = append(ui.Elements, UIelement{3, statusBox})
+
+	ui.CurrActive = 0
+	ui.Draw(&ui.Scr)
+}
+
+// Draw draws all it's elements
+func (ui *UIctrl) Draw(scr *Screen) {
+	fmt.Printf("Draw all elements..\r\n")
+	fmt.Printf("ui.elts: %+v\r\n", ui.Elements)
+	for _, element := range ui.Elements {
+		switch element.ID {
+		case 0:
+			el := element.Obj.(Box)
+			el.Draw(scr)
+		case 1:
+			el := element.Obj.(InfoBox)
+			el.Draw(scr)
+		case 2:
+			el := element.Obj.(InfoBox)
+			el.Draw(scr)
+		case 3:
+			el := element.Obj.(InfoBox)
+			el.Draw(scr)
+		default:
+
+		}
+	}
 }
 
 // DeInit restores terminal state from raw and clears screen
