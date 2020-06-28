@@ -24,19 +24,30 @@ func UIcontroller() {
 	screenExtbox := Box{0, 0, scrW, scrH, false}
 	screenExtbox.Draw(&scr)
 
-	keyInfo := InfoBox{1, 1, 25, 7, false, nil}
-	keyInfo.Init()
-	keyInfo.SetLineText(0, "Shortcuts")
-	keyInfo.SetLineText(1, "Esc: quit")
-	keyInfo.SetLineText(2, "Tab: next window")
-	keyInfo.Draw(&scr)
+	commonBox := InfoBox{1, 1, 40, 10, false, nil}
+	commonBox.Init()
+	commonBox.SetLineText(0, "БАЗА ДАННЫХ")
+	commonBox.SetLineText(2, "Выбор таблицы:")
+	commonBox.SetLineText(4, "# Рейсы")
+	commonBox.SetLineText(5, "# Аэропорты")
+	commonBox.SetLineText(6, "# Цены")
+	commonBox.Draw(&scr)
 
-	testInfo := InfoBox{30, 15, 25, 15, false, nil}
-	testInfo.Init()
-	testInfo.SetLineText(0, "Hello, world!")
-	testInfo.SetLineText(1, "blah blah ")
-	testInfo.SetLineText(8, "_____ ** ___")
-	testInfo.Draw(&scr)
+	tableBox := InfoBox{41, 1, scrW - 2 - 40, scrH - 2, false, nil}
+	tableBox.Init()
+	tableBox.SetLineText(0, "Здесь будет таблица базы данных")
+	tableBox.Draw(&scr)
+
+	statusBox := InfoBox{1, 11, 40, scrH - 2 - 10, false, nil}
+	statusBox.Init()
+	statusBox.SetLineText(0, "Статус программы:")
+
+	statusBox.SetLineText(2, "Текущая таблица: <Рейсы>")
+
+	statusBox.SetLineText(20, "Управление программой:")
+	statusBox.SetLineText(21, "Esc: выход из программы")
+	statusBox.SetLineText(22, "Tab: переход между окнами")
+	statusBox.Draw(&scr)
 
 	scr.SendToDisplay()
 	scr.UpdateSize()
