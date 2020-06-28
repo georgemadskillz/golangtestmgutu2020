@@ -11,8 +11,8 @@ import (
 // Screen is handling terminal window output
 type Screen struct {
 	size       winsize
-	width      int
-	height     int
+	Width      int
+	Height     int
 	clearFuncs map[string]func()
 	buffer     [][]rune
 }
@@ -43,10 +43,10 @@ func (scr *Screen) Init() {
 
 	scr.UpdateSize()
 
-	scr.buffer = make([][]rune, scr.height)
+	scr.buffer = make([][]rune, scr.Height)
 
-	for i := 0; i < scr.height; i++ {
-		scr.buffer[i] = make([]rune, scr.width)
+	for i := 0; i < scr.Height; i++ {
+		scr.buffer[i] = make([]rune, scr.Width)
 		for j := range scr.buffer[i] {
 			scr.buffer[i][j] = ' '
 		}
@@ -56,7 +56,7 @@ func (scr *Screen) Init() {
 // SetRune sets rune at given coords on screen
 func (scr *Screen) SetRune(x, y int, r rune) {
 	//fmt.Printf("SetRune: x=%v, y=%v, rune=%q\r\n", x, y, r)
-	if x >= scr.width || y >= scr.height {
+	if x >= scr.Width || y >= scr.Height {
 		return
 	}
 
@@ -93,16 +93,6 @@ func (scr *Screen) UpdateSize() {
 		panic(errno)
 	}
 
-	scr.width = int(scr.size.Col)
-	scr.height = int(scr.size.Row)
-}
-
-// GetWidth returns number of columns of terminal window
-func (scr *Screen) GetWidth() int {
-	return scr.width
-}
-
-// GetHeight returns number of rows of terminal window
-func (scr *Screen) GetHeight() int {
-	return scr.height
+	scr.Width = int(scr.size.Col)
+	scr.Height = int(scr.size.Row)
 }
