@@ -10,16 +10,12 @@ import (
 
 // UIctrl is a common structure handling UI
 type UIctrl struct {
-	Scr        Screen
-	TermState  *terminal.State
-	Elements   []UIelement
-	CurrActive int
-}
-
-// UIelement is
-type UIelement struct {
-	ID  int
-	Obj interface{}
+	Scr       Screen
+	TermState *terminal.State
+	Extbox    Box
+	CommonBox InfoBox
+	StatusBox InfoBox
+	TableBox  InfoBox
 }
 
 // Init initialize UI controller
@@ -32,67 +28,47 @@ func (ui *UIctrl) Init() {
 	}
 	ui.TermState = state
 
-	// Init user inteface
-	ui.Elements = make([]UIelement, 0)
-
 	// Ext border
-	screenExtbox := Box{0, 0, ui.Scr.Width, ui.Scr.Height, false}
-	ui.Elements = append(ui.Elements, UIelement{0, screenExtbox})
+	ui.Extbox = Box{0, 0, ui.Scr.Width, ui.Scr.Height, false}
 
 	// Common window
-	commonBox := InfoBox{1, 1, 40, 10, false, nil}
-	commonBox.Init()
-	commonBox.SetLineText(0, "БАЗА ДАННЫХ")
-	commonBox.SetLineText(2, "Выбор таблицы:")
-	commonBox.SetLineText(4, "# Рейсы")
-	commonBox.SetLineText(5, "# Аэропорты")
-	commonBox.SetLineText(6, "# Цены")
-	ui.Elements = append(ui.Elements, UIelement{1, commonBox})
+	ui.CommonBox = InfoBox{1, 1, 40, 10, false, nil}
+	ui.CommonBox.Init()
+	ui.CommonBox.SetLineText(0, "БАЗА ДАННЫХ")
+	ui.CommonBox.SetLineText(2, "Выбор таблицы:")
+	ui.CommonBox.SetLineText(4, "# Рейсы")
+	ui.CommonBox.SetLineText(5, "# Аэропорты")
+	ui.CommonBox.SetLineText(6, "# Цены")
+	ui.CommonBox.SetActiveState(true)
 
 	// Table window
-	tableBox := InfoBox{41, 1, ui.Scr.Width - 2 - 40, ui.Scr.Height - 2, false, nil}
-	tableBox.Init()
-	tableBox.SetLineText(0, "Здесь будет таблица базы данных")
-	ui.Elements = append(ui.Elements, UIelement{2, tableBox})
+	ui.TableBox = InfoBox{41, 1, ui.Scr.Width - 2 - 40, ui.Scr.Height - 2, false, nil}
+	ui.TableBox.Init()
+	ui.TableBox.SetLineText(0, "Здесь будет таблица базы данных")
 
 	// Status window
-	statusBox := InfoBox{1, 11, 40, ui.Scr.Height - 2 - 10, false, nil}
-	statusBox.Init()
-	statusBox.SetLineText(0, "Статус программы:")
+	ui.StatusBox = InfoBox{1, 11, 40, ui.Scr.Height - 2 - 10, false, nil}
+	ui.StatusBox.Init()
+	ui.StatusBox.SetLineText(0, "Статус программы:")
 
-	statusBox.SetLineText(2, "Текущая таблица: <Рейсы>")
+	ui.StatusBox.SetLineText(2, "Текущая таблица: <Рейсы>")
 
-	statusBox.SetLineText(20, "Управление программой:")
-	statusBox.SetLineText(21, "Esc: выход из программы")
-	statusBox.SetLineText(22, "Tab: переход между окнами")
-	ui.Elements = append(ui.Elements, UIelement{3, statusBox})
+	ui.StatusBox.SetLineText(14, "Управление программой:")
+	ui.StatusBox.SetLineText(15, "Esc: выход из программы")
+	ui.StatusBox.SetLineText(16, "Tab: переход между окнами")
 
-	ui.CurrActive = 0
+	ui.StatusBox.SetLineText(18, "─────────────────────────────────────")
+	ui.StatusBox.SetLineText(19, "Отладочная информация:")
+
 	ui.Draw(&ui.Scr)
 }
 
 // Draw draws all it's elements
 func (ui *UIctrl) Draw(scr *Screen) {
-	fmt.Printf("Draw all elements..\r\n")
-	fmt.Printf("ui.elts: %+v\r\n", ui.Elements)
-	for _, element := range ui.Elements {
-		switch element.ID {
-		case 0:
-			el := element.Obj.(Box)
-			el.Draw(scr)
-		case 1:
-			el := element.Obj.(InfoBox)
-			el.Draw(scr)
-		case 2:
-			el := element.Obj.(InfoBox)
-			el.Draw(scr)
-		case 3:
-			el := element.Obj.(InfoBox)
-			el.Draw(scr)
-		default:
-
-		}
-	}
+	ui.Extbox.Draw(scr)
+	ui.CommonBox.Draw(scr)
+	ui.StatusBox.Draw(scr)
+	ui.TableBox.Draw(scr)
 }
 
 // DeInit restores terminal state from raw and clears screen
@@ -101,6 +77,17 @@ func (ui *UIctrl) DeInit() {
 		//log.Println("warning, failed to restore terminal:", err)
 	}
 	ui.Scr.Clear()
+}
+
+var debugLine int = 20
+
+func (ui *UIctrl) debugPrintf(str string, a ...interface{}) {
+	msg := fmt.Sprintf(str, a)
+	ui.StatusBox.SetLineText(debugLine, msg)
+	debugLine++
+	if debugLine >= len(ui.StatusBox.Text) {
+		debugLine = 20
+	}
 }
 
 // UIcontroller is a task for user interface handling
@@ -116,11 +103,23 @@ func UIcontroller() {
 	for {
 
 		switch r, _, _ := inp.ReadRune(); r {
-		case '\x1b':
+		case '\x1b': // Esc
 			ui.DeInit()
 			os.Exit(0)
 		case '\t': // Tab
 
+			if ui.CommonBox.IsActive {
+				ui.CommonBox.SetActiveState(false)
+				ui.TableBox.SetActiveState(true)
+			} else {
+				ui.CommonBox.SetActiveState(true)
+				ui.TableBox.SetActiveState(false)
+			}
+
+			ui.debugPrintf("cmnbox state: %v", ui.CommonBox.IsActive)
+
+			ui.Draw(&ui.Scr)
+			ui.Scr.SendToDisplay()
 		default:
 			ui.Scr.SendToDisplay()
 		}

@@ -48,6 +48,11 @@ func (b *InfoBox) SetActiveState(state bool) {
 	b.IsActive = state
 }
 
+// GetActiveState returns IsActive of UI element
+func (b *InfoBox) GetActiveState() bool {
+	return b.IsActive
+}
+
 // Clean clear infobox with spaces within borders
 func (b *InfoBox) Clean(scr *Screen) {
 	for x := b.X + 1; x < b.X+b.Width-1; x++ {
@@ -89,6 +94,8 @@ func (b *InfoBox) Draw(scr *Screen) {
 		if b.IsActive {
 			scr.SetRune(x, b.Y, '━')
 			scr.SetRune(x, b.Y+b.Height-1, '━')
+			// scr.SetRune(x, b.Y, '═')
+			// scr.SetRune(x, b.Y+b.Height-1, '═')
 		} else {
 			scr.SetRune(x, b.Y, '─')
 			scr.SetRune(x, b.Y+b.Height-1, '─')
@@ -100,6 +107,8 @@ func (b *InfoBox) Draw(scr *Screen) {
 		if b.IsActive {
 			scr.SetRune(b.X, y, '┃')
 			scr.SetRune(b.X+b.Width-1, y, '┃')
+			// scr.SetRune(b.X, y, '║')
+			// scr.SetRune(b.X+b.Width-1, y, '║')
 		} else {
 			scr.SetRune(b.X, y, '│')
 			scr.SetRune(b.X+b.Width-1, y, '│')
@@ -112,6 +121,10 @@ func (b *InfoBox) Draw(scr *Screen) {
 		scr.SetRune(b.X+b.Width-1, b.Y, '┓')
 		scr.SetRune(b.X, b.Y+b.Height-1, '┗')
 		scr.SetRune(b.X+b.Width-1, b.Y+b.Height-1, '┛')
+		// scr.SetRune(b.X, b.Y, '╔')
+		// scr.SetRune(b.X+b.Width-1, b.Y, '╗')
+		// scr.SetRune(b.X, b.Y+b.Height-1, '╚')
+		// scr.SetRune(b.X+b.Width-1, b.Y+b.Height-1, '╝')
 	} else {
 		scr.SetRune(b.X, b.Y, '┌')
 		scr.SetRune(b.X+b.Width-1, b.Y, '┐')
