@@ -1,9 +1,7 @@
 package cui
 
 import (
-	"bufio"
 	"fmt"
-	"os"
 
 	"golang.org/x/crypto/ssh/terminal"
 )
@@ -60,7 +58,9 @@ func (ui *UIctrl) Init() {
 	ui.StatusBox.SetLineText(18, "─────────────────────────────────────")
 	ui.StatusBox.SetLineText(19, "Отладочная информация:")
 
+	ui.Scr.UpdateSize()
 	ui.Draw(&ui.Scr)
+	ui.Scr.SendToDisplay()
 }
 
 // Draw draws all it's elements
@@ -81,51 +81,12 @@ func (ui *UIctrl) DeInit() {
 
 var debugLine int = 20
 
-func (ui *UIctrl) debugPrintf(str string, a ...interface{}) {
+// DebugPrintln is
+func (ui *UIctrl) DebugPrintln(str string, a ...interface{}) {
 	msg := fmt.Sprintf(str, a)
 	ui.StatusBox.SetLineText(debugLine, msg)
 	debugLine++
 	if debugLine >= len(ui.StatusBox.Text) {
 		debugLine = 20
-	}
-}
-
-// UIcontroller is a task for user interface handling
-func UIcontroller() {
-
-	ui := UIctrl{}
-	ui.Init()
-
-	ui.Scr.SendToDisplay()
-	ui.Scr.UpdateSize()
-
-	inp := bufio.NewReader(os.Stdin)
-	for {
-
-		switch r, _, _ := inp.ReadRune(); r {
-		case '\x1b': // Esc
-			ui.DeInit()
-			os.Exit(0)
-		case '\t': // Tab
-
-			if ui.CommonBox.IsActive {
-				ui.CommonBox.SetActiveState(false)
-				ui.TableBox.SetActiveState(true)
-			} else {
-				ui.CommonBox.SetActiveState(true)
-				ui.TableBox.SetActiveState(false)
-			}
-
-			ui.debugPrintf("cmnbox state: %v", ui.CommonBox.IsActive)
-
-			ui.Draw(&ui.Scr)
-			ui.Scr.SendToDisplay()
-		default:
-			ui.Scr.SendToDisplay()
-		}
-	}
-
-	for {
-
 	}
 }

@@ -1,52 +1,83 @@
 package ioctrl
 
-// IOcontroller handling DB files write/read
-func IOcontroller() {
-	var io FlyDbIO
-
-	io.Init("database/flights.fdb", "database/airports.fdb", "database/prices.fdb")
-
-	for {
-
-	}
-}
+import (
+	"bufio"
+	"flydb/cui"
+	"flydb/datamdl"
+	"os"
+	"strings"
+)
 
 // FlyDbIO is a common type for I/O actions
 type FlyDbIO struct {
-	flyFileName string
-	airFileName string
-	prcFilename string
+	db        datamdl.FlyDb
+	flyHandle FileHandler
+	airHandle FileHandler
+	prcHandle FileHandler
+	CuiPtr    *cui.UIctrl
+}
+
+// FileHandler is
+type FileHandler struct {
+	path      string
+	available bool
 }
 
 // Init initializes io fr FlyDB
-func (io *FlyDbIO) Init(flyFile, airFile, prcFile string) {
+func (io *FlyDbIO) Init(flyPath, airPath, prcPath string) {
+	io.db.Init(100)
 
-	io.flyFileName = flyFile
-	io.airFileName = airFile
-	io.prcFilename = prcFile
+	io.flyHandle.path = "database/flights.fdb"
+	io.airHandle.path = "database/airports.fdb"
+	io.prcHandle.path = "database/prices.fdb"
 
+	io.LoadFlyTable()
 }
 
-// func (io *FlyDbIO) ReadDb () {
-// 	// // Check flights tale file
-// 	// if _, err := os.Stat(flyFile); err == nil {
-// 	// 	file, err := os.Open(flyFile)
-// 	// 	if err != nil {
-// 	// 		log.Fatal(err)
-// 	// 	}
-// 	// 	defer file.Close()
+// GetRange is
+func (io *FlyDbIO) GetRange(fromIndex, toIndex int) []datamdl.Flight {
+	//r := toIndex - fromIndex
+	// if range < 0 ????
 
-// 	// } else if os.IsNotExist(err) {
-// 	// 	// path/to/whatever does *not* exist
+	flights := make([]datamdl.Flight, 0)
 
-// 	// }
-// }
+	for i := fromIndex; i <= toIndex; i++ {
+		flights = append(flights, io.db.GetFlight(i))
+	}
 
-// func (io *FlyDbIO) WriteDb () {
+	return flights
+}
 
-// }
+// LoadFlyTable is
+func (io *FlyDbIO) LoadFlyTable() error {
+	file, err := os.Open(io.flyHandle.path)
+	defer file.Close()
 
-// // CheckFileFormat checks file format and returns number of rows
-// func (io *FlyDbIO) CheckFileFormat() rowsAmnt int {
+	if err != nil {
+		return err
+	}
 
-// }
+	scanner := bufio.NewScanner(file)
+	scanner.Split(bufio.ScanLines)
+
+	for scanner.Scan() {
+		line := scanner.Text()
+		io.CuiPtr.DebugPrintln("Got line: %v", line)
+		flight := parseFdbRow(line)
+		io.db.AppendFlight(flight)
+	}
+
+	return nil
+}
+
+func parseFdbRow(line string) datamdl.Flight {
+	tokens := strings.Split(line, ",")
+
+	flight := datamdl.Flight{}
+	flight.TimeFrom = tokens[0]
+	flight.FlightFrom = tokens[1]
+	flight.FlightTo = tokens[2]
+	flight.TimeTo = tokens[3]
+
+	return flight
+}
