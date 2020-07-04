@@ -25,12 +25,14 @@ func main() {
 			ui.DeInit()
 			os.Exit(0)
 		case '\t': // Tab
-			// flights := io.GetRange(0, 7)
+			flights := io.GetRange(0, 7)
 
-			// for i, fl := range flights {
-			// 	str := fmt.Sprintf("%v|%v|%v|%v", fl.TimeFrom, fl.FlightFrom, fl.FlightTo, fl.TimeTo)
-			// 	ui.TableBox.SetLineText(i, str)
-			// }
+			for i, fl := range flights {
+				ui.TblBox.SetCell(i+2, 0, fl.TimeFrom)
+				ui.TblBox.SetCell(i+2, 1, fl.FlightFrom)
+				ui.TblBox.SetCell(i+2, 2, fl.FlightTo)
+				ui.TblBox.SetCell(i+2, 3, fl.TimeTo)
+			}
 
 			if ui.CommonBox.IsActive {
 				ui.CommonBox.SetActiveState(false)

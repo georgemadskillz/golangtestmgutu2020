@@ -2,8 +2,6 @@ package cui
 
 import (
 	"fmt"
-	"log"
-	"strconv"
 
 	"golang.org/x/crypto/ssh/terminal"
 )
@@ -44,23 +42,15 @@ func (ui *UIctrl) Init() {
 	// Table window
 	ui.TblBox = TableBox{41, 1, ui.Scr.Width - 2 - 40, ui.Scr.Height - 2, false, 4, nil, nil}
 	ui.TblBox.Init()
-	// ui.TblBox.SetColsWidths(10, 10, 10, 15)
-	// ui.TblBox.SetCell(0, 0, "Date from")
-	// ui.TblBox.SetCell(0, 1, "From")
-	// ui.TblBox.SetCell(0, 2, "To")
-	// ui.TblBox.SetCell(0, 3, "Date to")
+	ui.TblBox.SetCell(0, 0, "Date from")
+	ui.TblBox.SetCell(0, 1, "From")
+	ui.TblBox.SetCell(0, 2, "To")
+	ui.TblBox.SetCell(0, 3, "Date to")
 
-	log.Printf("Cells[0] before=[%#v]\r", ui.TblBox.Cells[0])
-	str := ""
-
-	str = "my w=" + strconv.Itoa(ui.TblBox.CellsWidths[0])
-	ui.TblBox.SetCell(0, 0, str)
-	str = "my w=" + strconv.Itoa(ui.TblBox.CellsWidths[0])
-	ui.TblBox.SetCell(0, 1, str)
-	str = "my w=" + strconv.Itoa(ui.TblBox.CellsWidths[0])
-	ui.TblBox.SetCell(0, 2, str)
-	str = "my w=" + strconv.Itoa(ui.TblBox.CellsWidths[0])
-	ui.TblBox.SetCell(0, 3, str)
+	ui.TblBox.FillCell(1, 0, '═')
+	ui.TblBox.FillCell(1, 1, '═')
+	ui.TblBox.FillCell(1, 2, '═')
+	ui.TblBox.FillCell(1, 3, '═')
 
 	// Status window
 	ui.StatusBox = InfoBox{1, 11, 40, ui.Scr.Height - 2 - 10, false, nil}

@@ -1,8 +1,6 @@
 package cui
 
-import (
-	"fmt"
-)
+import "log"
 
 // TableBox is
 type TableBox struct {
@@ -34,6 +32,12 @@ func (t *TableBox) Init() {
 			t.CellsWidths[i] = w
 		}
 	}
+
+	for r := 0; r < t.Height-2; r++ {
+		for c := 0; c < t.ColsAmount; c++ {
+			t.SetCell(r, c, " ")
+		}
+	}
 }
 
 // SetColsWidths is
@@ -54,7 +58,34 @@ func (t *TableBox) SetCell(row, col int, text string) {
 		return
 	}
 
-	t.Cells[row][col] = text
+	cellStr := ""
+
+	if col > 0 {
+		cellStr += "║"
+	}
+
+	cellStr += text
+
+	runes := []rune(cellStr)
+
+	if len(runes) >= t.CellsWidths[col] {
+		t.Cells[row][col] = string(runes[0:t.CellsWidths[col]])
+	} else {
+		for len(runes) < t.CellsWidths[col] {
+			runes = append(runes, ' ')
+		}
+		t.Cells[row][col] = string(runes)
+	}
+}
+
+// FillCell is
+func (t *TableBox) FillCell(row, col int, r rune) {
+	str := ""
+	for i := 0; i < t.CellsWidths[col]; i++ {
+		str += string(r)
+	}
+
+	t.SetCell(row, col, str)
 }
 
 // SetSize sets new size of the infobox
@@ -79,7 +110,7 @@ func (t *TableBox) GetActiveState() bool {
 	return t.IsActive
 }
 
-// Clean clear infobox with spaces within borders
+// Clean is
 func (t *TableBox) Clean(scr *Screen) {
 	for x := t.X + 1; x < t.X+t.Width-1; x++ {
 		for y := t.Y + 1; y < t.Y+t.Height-1; y++ {
@@ -93,25 +124,14 @@ func (t *TableBox) Draw(scr *Screen) {
 	t.Clean(scr)
 
 	for r, row := range t.Cells {
-
+		log.Printf("[r=%v] row=[%#v]\r", r, row)
 		rowStr := ""
-		for i, cellVal := range row {
-			subStr := ""
-			if i > 0 {
-				subStr += "║"
-			} else {
-				subStr += " "
-			}
-
-			subStr += fmt.Sprintf("%s", cellVal)
-			for len(subStr) < t.CellsWidths[i] {
-				subStr += " "
-			}
-
-			rowStr += subStr
+		for _, cellVal := range row {
+			rowStr += cellVal
 		}
 
 		strRunes := []rune(rowStr)
+		log.Printf("[r=%v] runes=[%#v]\r", r, strRunes)
 
 		y := t.Y + 1 + r
 		j := 0
