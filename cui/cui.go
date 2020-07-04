@@ -2,6 +2,8 @@ package cui
 
 import (
 	"fmt"
+	"log"
+	"strconv"
 
 	"golang.org/x/crypto/ssh/terminal"
 )
@@ -13,7 +15,7 @@ type UIctrl struct {
 	Extbox    Box
 	CommonBox InfoBox
 	StatusBox InfoBox
-	TableBox  InfoBox
+	TblBox    TableBox
 }
 
 // Init initialize UI controller
@@ -40,9 +42,25 @@ func (ui *UIctrl) Init() {
 	ui.CommonBox.SetActiveState(true)
 
 	// Table window
-	ui.TableBox = InfoBox{41, 1, ui.Scr.Width - 2 - 40, ui.Scr.Height - 2, false, nil}
-	ui.TableBox.Init()
-	ui.TableBox.SetLineText(0, "Здесь будет таблица базы данных")
+	ui.TblBox = TableBox{41, 1, ui.Scr.Width - 2 - 40, ui.Scr.Height - 2, false, 4, nil, nil}
+	ui.TblBox.Init()
+	// ui.TblBox.SetColsWidths(10, 10, 10, 15)
+	// ui.TblBox.SetCell(0, 0, "Date from")
+	// ui.TblBox.SetCell(0, 1, "From")
+	// ui.TblBox.SetCell(0, 2, "To")
+	// ui.TblBox.SetCell(0, 3, "Date to")
+
+	log.Printf("Cells[0] before=[%#v]\r", ui.TblBox.Cells[0])
+	str := ""
+
+	str = "my w=" + strconv.Itoa(ui.TblBox.CellsWidths[0])
+	ui.TblBox.SetCell(0, 0, str)
+	str = "my w=" + strconv.Itoa(ui.TblBox.CellsWidths[0])
+	ui.TblBox.SetCell(0, 1, str)
+	str = "my w=" + strconv.Itoa(ui.TblBox.CellsWidths[0])
+	ui.TblBox.SetCell(0, 2, str)
+	str = "my w=" + strconv.Itoa(ui.TblBox.CellsWidths[0])
+	ui.TblBox.SetCell(0, 3, str)
 
 	// Status window
 	ui.StatusBox = InfoBox{1, 11, 40, ui.Scr.Height - 2 - 10, false, nil}
@@ -68,7 +86,7 @@ func (ui *UIctrl) Draw(scr *Screen) {
 	ui.Extbox.Draw(scr)
 	ui.CommonBox.Draw(scr)
 	ui.StatusBox.Draw(scr)
-	ui.TableBox.Draw(scr)
+	ui.TblBox.Draw(scr)
 }
 
 // DeInit restores terminal state from raw and clears screen

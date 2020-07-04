@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"flydb/cui"
 	"flydb/ioctrl"
-	"fmt"
 	"os"
 )
 
@@ -26,19 +25,19 @@ func main() {
 			ui.DeInit()
 			os.Exit(0)
 		case '\t': // Tab
-			flights := io.GetRange(0, 7)
+			// flights := io.GetRange(0, 7)
 
-			for i, fl := range flights {
-				str := fmt.Sprintf("%v|%v|%v|%v", fl.TimeFrom, fl.FlightFrom, fl.FlightTo, fl.TimeTo)
-				ui.TableBox.SetLineText(i, str)
-			}
+			// for i, fl := range flights {
+			// 	str := fmt.Sprintf("%v|%v|%v|%v", fl.TimeFrom, fl.FlightFrom, fl.FlightTo, fl.TimeTo)
+			// 	ui.TableBox.SetLineText(i, str)
+			// }
 
 			if ui.CommonBox.IsActive {
 				ui.CommonBox.SetActiveState(false)
-				ui.TableBox.SetActiveState(true)
+				ui.TblBox.SetActiveState(true)
 			} else {
 				ui.CommonBox.SetActiveState(true)
-				ui.TableBox.SetActiveState(false)
+				ui.TblBox.SetActiveState(false)
 			}
 
 			ui.Draw(&ui.Scr)

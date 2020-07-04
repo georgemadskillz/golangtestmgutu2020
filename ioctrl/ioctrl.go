@@ -62,7 +62,7 @@ func (io *FlyDbIO) LoadFlyTable() error {
 
 	for scanner.Scan() {
 		line := scanner.Text()
-		io.CuiPtr.DebugPrintln("Got line: %v", line)
+		//io.CuiPtr.DebugPrintln("Got line: %v", line)
 		flight := parseFdbRow(line)
 		io.db.AppendFlight(flight)
 	}
