@@ -3,7 +3,9 @@ package main
 import (
 	"bufio"
 	"flydb/cui"
+	"flydb/datamdl"
 	"flydb/ioctrl"
+	"log"
 	"os"
 )
 
@@ -14,8 +16,7 @@ func main() {
 
 	io := ioctrl.FlyDbIO{}
 	io.CuiPtr = &ui
-	io.Init("database/flights.fdb", "database/airports.fdb", "database/prices.fdb")
-	io.LoadFlyTable()
+	io.Init()
 
 	inp := bufio.NewReader(os.Stdin)
 	for {
@@ -25,14 +26,6 @@ func main() {
 			ui.DeInit()
 			os.Exit(0)
 		case '\t': // Tab
-			flights := io.GetRange(0, 7)
-
-			for i, fl := range flights {
-				ui.TblBox.SetCell(i+2, 0, fl.TimeFrom)
-				ui.TblBox.SetCell(i+2, 1, fl.FlightFrom)
-				ui.TblBox.SetCell(i+2, 2, fl.FlightTo)
-				ui.TblBox.SetCell(i+2, 3, fl.TimeTo)
-			}
 
 			if ui.CommonBox.IsActive {
 				ui.CommonBox.SetActiveState(false)
@@ -44,6 +37,20 @@ func main() {
 
 			ui.Draw(&ui.Scr)
 			ui.Scr.SendToDisplay()
+		case '1':
+			flights := io.GetRange(ioctrl.FdbFly, 0, 5)
+
+			log.Printf("Got flights=[%#v]\r", flights)
+
+			for i, fl := range flights {
+				f := fl.(datamdl.Flight)
+				ui.TblBox.SetCell(i+2, 0, f.TimeFrom)
+				ui.TblBox.SetCell(i+2, 1, f.FlightFrom)
+				ui.TblBox.SetCell(i+2, 2, f.FlightTo)
+				ui.TblBox.SetCell(i+2, 3, f.TimeTo)
+			}
+		case '2':
+		case '3':
 		default:
 			ui.Scr.SendToDisplay()
 		}
