@@ -1,7 +1,5 @@
 package cui
 
-import "log"
-
 // TableBox is
 type TableBox struct {
 	X, Y          int
@@ -124,15 +122,12 @@ func (t *TableBox) Draw(scr *Screen) {
 	t.Clean(scr)
 
 	for r, row := range t.Cells {
-		log.Printf("[r=%v] row=[%#v]\r", r, row)
 		rowStr := ""
 		for _, cellVal := range row {
 			rowStr += cellVal
 		}
 
 		strRunes := []rune(rowStr)
-		log.Printf("[r=%v] runes=[%#v]\r", r, strRunes)
-
 		y := t.Y + 1 + r
 		j := 0
 		for x := t.X + 1; x < t.X+t.Width-1; x++ {

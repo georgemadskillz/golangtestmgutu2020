@@ -1,15 +1,8 @@
 package cui
 
-import (
-	"fmt"
-
-	"golang.org/x/crypto/ssh/terminal"
-)
-
 // UIctrl is a common structure handling UI
 type UIctrl struct {
 	Scr       Screen
-	TermState *terminal.State
 	Extbox    Box
 	CommonBox InfoBox
 	StatusBox InfoBox
@@ -18,13 +11,8 @@ type UIctrl struct {
 
 // Init initialize UI controller
 func (ui *UIctrl) Init() {
-	ui.Scr.Init()
 
-	state, err := terminal.MakeRaw(0)
-	if err != nil {
-		//log.Fatalln("setting stdin to raw:", err)
-	}
-	ui.TermState = state
+	ui.Scr.Init()
 
 	// Ext border
 	ui.Extbox = Box{0, 0, ui.Scr.Width, ui.Scr.Height, false}
@@ -71,30 +59,15 @@ func (ui *UIctrl) Init() {
 	ui.Scr.SendToDisplay()
 }
 
+// DeInit is
+func (ui *UIctrl) DeInit() {
+	ui.Scr.Clear()
+}
+
 // Draw draws all it's elements
 func (ui *UIctrl) Draw(scr *Screen) {
 	ui.Extbox.Draw(scr)
 	ui.CommonBox.Draw(scr)
 	ui.StatusBox.Draw(scr)
 	ui.TblBox.Draw(scr)
-}
-
-// DeInit restores terminal state from raw and clears screen
-func (ui *UIctrl) DeInit() {
-	if err := terminal.Restore(0, ui.TermState); err != nil {
-		//log.Println("warning, failed to restore terminal:", err)
-	}
-	ui.Scr.Clear()
-}
-
-var debugLine int = 20
-
-// DebugPrintln is
-func (ui *UIctrl) DebugPrintln(str string, a ...interface{}) {
-	msg := fmt.Sprintf(str, a)
-	ui.StatusBox.SetLineText(debugLine, msg)
-	debugLine++
-	if debugLine >= len(ui.StatusBox.Text) {
-		debugLine = 20
-	}
 }

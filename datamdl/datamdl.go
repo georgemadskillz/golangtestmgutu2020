@@ -1,6 +1,8 @@
 package datamdl
 
-import "fmt"
+import (
+	"fmt"
+)
 
 const (
 	// FdbFly is a special fdb key for Flight table

@@ -32,10 +32,10 @@ func (io *FlyDbIO) Init() {
 
 	io.db.Init(100)
 
-	io.files = make([]string, 3)
-	io.files = append(io.files, "database/flights.fdb")
-	io.files = append(io.files, "database/airports.fdb")
-	io.files = append(io.files, "database/prices.fdb")
+	io.files = make([]string, 3, 3)
+	io.files[FdbFly] = "database/flights.fdb"
+	io.files[FdbAir] = "database/airports.fdb"
+	io.files[FdbPrc] = "database/prices.fdb"
 
 	for key := FdbFly; key < FdbAmount; key++ {
 		io.LoadFile(key)
@@ -53,19 +53,21 @@ func (io *FlyDbIO) GetRange(key int, fromIndex, toIndex int) []interface{} {
 
 	switch key {
 	case FdbFly:
+
 		flights := make([]datamdl.Flight, 0)
 		for i := fromIndex; i <= toIndex; i++ {
-
 			flight, err := io.db.GetRow(key, i)
-			if err != nil {
-				flights = append(flights, flight.(datamdl.Flight))
-			} else {
-				flights = append(flights, datamdl.Flight{})
-			}
 
+			if err != nil {
+
+				flights = append(flights, datamdl.Flight{})
+			} else {
+				f := flight.(datamdl.Flight)
+				flights = append(flights, f)
+			}
 		}
 
-		result := make([]interface{}, len(flights))
+		result := make([]interface{}, 0)
 		for i := range flights {
 			result = append(result, flights[i])
 		}
@@ -142,8 +144,8 @@ func (io *FlyDbIO) LoadFile(key int) error {
 			flight, _ := parseFdbRow(key, line)
 			io.db.AppendRow(flight.(datamdl.Flight))
 		case FdbAir:
-			flight, _ := parseFdbRow(key, line)
-			io.db.AppendRow(flight.(datamdl.Airport))
+			air, _ := parseFdbRow(key, line)
+			io.db.AppendRow(air.(datamdl.Airport))
 		case FdbPrc:
 			price, _ := parseFdbRow(key, line)
 			io.db.AppendRow(price.(datamdl.Price))
@@ -182,5 +184,5 @@ func parseFdbRow(key int, line string) (interface{}, error) {
 		return price, nil
 	}
 
-	return datamdl.Flight{}, fmt.Errorf("unknown key=%v", key)
+	return nil, fmt.Errorf("unknown key=%v", key)
 }
