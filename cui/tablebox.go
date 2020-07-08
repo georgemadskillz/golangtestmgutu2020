@@ -11,7 +11,19 @@ type TableBox struct {
 }
 
 // Init creates
-func (t *TableBox) Init() {
+func (t *TableBox) Init(x, y, w, h int) {
+	t.IsActive = false
+	t.X = x
+	t.Y = y
+	t.Width = w
+	t.Height = h
+}
+
+// Reset creates
+func (t *TableBox) Reset(colsAmount int) {
+	t.ColsAmount = colsAmount
+	t.Cells = nil
+	t.CellsWidths = nil
 
 	rows := t.Height - 2
 	for r := 0; r < rows; r++ {
@@ -36,11 +48,6 @@ func (t *TableBox) Init() {
 			t.SetCell(r, c, " ")
 		}
 	}
-}
-
-// SetColsAmount is
-func (t *TableBox) SetColsAmount(amnt int) {
-	t.ColsAmount = amnt
 }
 
 // SetCell is

@@ -68,8 +68,9 @@ func (app *AppController) Init() {
 	app.StatusBox.SetLineText(19, "Отладочная информация:")
 
 	// Table window
-	app.TblBox = cui.TableBox{41, 1, app.scr.Width - 2 - 40, app.scr.Height - 2, false, 4, nil, nil}
-	app.TblBox.Init()
+	app.TblBox = cui.TableBox{}
+	app.TblBox.Init(41, 1, app.scr.Width-2-40, app.scr.Height-2)
+	app.TblBox.Reset(4)
 	app.TblBox.SetCell(0, 0, "Date from")
 	app.TblBox.SetCell(0, 1, "From")
 	app.TblBox.SetCell(0, 2, "To")
@@ -87,6 +88,7 @@ func (app *AppController) Init() {
 func (app *AppController) Exit() {
 	app.scr.Clear()
 	terminal.Restore(0, app.termState)
+	//fmt.Printf("DB=%#v\n", app.io.Db)
 	os.Exit(0)
 }
 
@@ -129,7 +131,18 @@ func (app *AppController) CheckKbdInput(kbdKey rune) {
 	case '1':
 		app.SetCurrTbl(ioctrl.FdbFly)
 
-		flights := app.io.GetRange(ioctrl.FdbFly, 0, 5)
+		app.TblBox.Reset(4)
+		app.TblBox.SetCell(0, 0, "Date from")
+		app.TblBox.SetCell(0, 1, "From")
+		app.TblBox.SetCell(0, 2, "To")
+		app.TblBox.SetCell(0, 3, "Date to")
+
+		app.TblBox.FillCell(1, 0, '═')
+		app.TblBox.FillCell(1, 1, '═')
+		app.TblBox.FillCell(1, 2, '═')
+		app.TblBox.FillCell(1, 3, '═')
+
+		flights := app.io.GetRange(ioctrl.FdbFly, 0, 20)
 
 		for i, fl := range flights {
 			f := fl.(datamdl.Flight)
@@ -142,7 +155,16 @@ func (app *AppController) CheckKbdInput(kbdKey rune) {
 	case '2':
 		app.SetCurrTbl(ioctrl.FdbAir)
 
-		airports := app.io.GetRange(ioctrl.FdbAir, 0, 5)
+		app.TblBox.Reset(3)
+		app.TblBox.SetCell(0, 0, "AirID")
+		app.TblBox.SetCell(0, 1, "AirCity")
+		app.TblBox.SetCell(0, 2, "AirName")
+
+		app.TblBox.FillCell(1, 0, '═')
+		app.TblBox.FillCell(1, 1, '═')
+		app.TblBox.FillCell(1, 2, '═')
+
+		airports := app.io.GetRange(ioctrl.FdbAir, 0, 20)
 
 		for i, air := range airports {
 			a := air.(datamdl.Airport)
@@ -154,7 +176,16 @@ func (app *AppController) CheckKbdInput(kbdKey rune) {
 	case '3':
 		app.SetCurrTbl(ioctrl.FdbPrc)
 
-		prices := app.io.GetRange(ioctrl.FdbPrc, 0, 5)
+		app.TblBox.Reset(3)
+		app.TblBox.SetCell(0, 0, "FlightID")
+		app.TblBox.SetCell(0, 1, "Seat")
+		app.TblBox.SetCell(0, 2, "Price")
+
+		app.TblBox.FillCell(1, 0, '═')
+		app.TblBox.FillCell(1, 1, '═')
+		app.TblBox.FillCell(1, 2, '═')
+
+		prices := app.io.GetRange(ioctrl.FdbPrc, 0, 20)
 
 		for i, pr := range prices {
 			p := pr.(datamdl.Price)

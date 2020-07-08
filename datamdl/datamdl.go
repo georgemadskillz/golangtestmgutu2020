@@ -186,7 +186,7 @@ func (db *FlyDb) AppendRow(row interface{}) error {
 	case Price:
 		return db.prcTable.appendRow(r)
 	default:
-		return fmt.Errorf("unknown data base typein row=%#v", r)
+		panic("unknown data base type")
 	}
 }
 

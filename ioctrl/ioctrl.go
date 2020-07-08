@@ -21,14 +21,14 @@ const (
 
 // FlyDbIO is a common type for I/O actions
 type FlyDbIO struct {
-	db    datamdl.FlyDb
+	Db    datamdl.FlyDb
 	files []string
 }
 
 // Init initializes io fr FlyDB
 func (io *FlyDbIO) Init() {
 
-	io.db.Init(100)
+	io.Db.Init(100)
 
 	io.files = make([]string, 3, 3)
 	io.files[FdbFly] = "database/flights.fdb"
@@ -51,10 +51,9 @@ func (io *FlyDbIO) GetRange(key int, fromIndex, toIndex int) []interface{} {
 
 		flights := make([]datamdl.Flight, 0)
 		for i := fromIndex; i <= toIndex; i++ {
-			flight, err := io.db.GetRow(key, i)
+			flight, err := io.Db.GetRow(key, i)
 
 			if err != nil {
-
 				flights = append(flights, datamdl.Flight{})
 			} else {
 				f := flight.(datamdl.Flight)
@@ -70,14 +69,16 @@ func (io *FlyDbIO) GetRange(key int, fromIndex, toIndex int) []interface{} {
 		return result
 
 	case FdbAir:
+
 		airports := make([]datamdl.Airport, 0)
 		for i := fromIndex; i <= toIndex; i++ {
+			airport, err := io.Db.GetRow(key, i)
 
-			airport, err := io.db.GetRow(key, i)
 			if err != nil {
-				airport = append(airports, airport.(datamdl.Airport))
+				airports = append(airports, datamdl.Airport{})
 			} else {
-				airport = append(airports, datamdl.Airport{})
+				a := airport.(datamdl.Airport)
+				airports = append(airports, a)
 			}
 
 		}
@@ -93,11 +94,12 @@ func (io *FlyDbIO) GetRange(key int, fromIndex, toIndex int) []interface{} {
 		prices := make([]datamdl.Price, 0)
 		for i := fromIndex; i <= toIndex; i++ {
 
-			price, err := io.db.GetRow(key, i)
+			price, err := io.Db.GetRow(key, i)
 			if err != nil {
-				prices = append(prices, price.(datamdl.Price))
-			} else {
 				prices = append(prices, datamdl.Price{})
+			} else {
+				p := price.(datamdl.Price)
+				prices = append(prices, p)
 			}
 
 		}
@@ -137,13 +139,13 @@ func (io *FlyDbIO) LoadFile(key int) error {
 		switch key {
 		case FdbFly:
 			flight, _ := parseFdbRow(key, line)
-			io.db.AppendRow(flight.(datamdl.Flight))
+			io.Db.AppendRow(flight.(datamdl.Flight))
 		case FdbAir:
 			air, _ := parseFdbRow(key, line)
-			io.db.AppendRow(air.(datamdl.Airport))
+			io.Db.AppendRow(air.(datamdl.Airport))
 		case FdbPrc:
 			price, _ := parseFdbRow(key, line)
-			io.db.AppendRow(price.(datamdl.Price))
+			io.Db.AppendRow(price.(datamdl.Price))
 		}
 	}
 
