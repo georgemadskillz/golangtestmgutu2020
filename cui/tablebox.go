@@ -38,12 +38,9 @@ func (t *TableBox) Init() {
 	}
 }
 
-// SetColsWidths is
-func (t *TableBox) SetColsWidths(widths ...int) {
-	if len(widths) != t.ColsAmount {
-		return
-	}
-
+// SetColsAmount is
+func (t *TableBox) SetColsAmount(amnt int) {
+	t.ColsAmount = amnt
 }
 
 // SetCell is

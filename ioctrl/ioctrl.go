@@ -2,7 +2,6 @@ package ioctrl
 
 import (
 	"bufio"
-	"flydb/cui"
 	"flydb/datamdl"
 	"fmt"
 	"os"
@@ -22,9 +21,8 @@ const (
 
 // FlyDbIO is a common type for I/O actions
 type FlyDbIO struct {
-	db     datamdl.FlyDb
-	files  []string
-	CuiPtr *cui.UIctrl
+	db    datamdl.FlyDb
+	files []string
 }
 
 // Init initializes io fr FlyDB
@@ -47,9 +45,6 @@ func (io *FlyDbIO) GetRange(key int, fromIndex, toIndex int) []interface{} {
 	if key >= FdbAmount {
 		return nil
 	}
-
-	//r := toIndex - fromIndex
-	// if range < 0 ????
 
 	switch key {
 	case FdbFly:
@@ -87,7 +82,7 @@ func (io *FlyDbIO) GetRange(key int, fromIndex, toIndex int) []interface{} {
 
 		}
 
-		result := make([]interface{}, len(airports))
+		result := make([]interface{}, 0)
 		for i := range airports {
 			result = append(result, airports[i])
 		}
@@ -107,9 +102,9 @@ func (io *FlyDbIO) GetRange(key int, fromIndex, toIndex int) []interface{} {
 
 		}
 
-		result := make([]interface{}, len(prices))
-		for i := range prices {
-			result = append(result, prices[i])
+		result := make([]interface{}, 0)
+		for pr := range prices {
+			result = append(result, prices[pr])
 		}
 
 		return result
